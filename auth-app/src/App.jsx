@@ -1,11 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/public/Home"; 
-import Signup from "./pages/Signup";
+import Signup from "./auth/Signup";
 import PrivateRoute from "./auth/PrivateRoute";
 import Leads from "./pages/Leads"; 
 import Login from "./auth/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard"; 
-import AgentDashboard from "./pages/agent/AgentDashboard";
+import AgentDashboard from "./pages/agent/pages/AgentDashboard";
 import LogoutButton from "./auth/Logout";
 import ProtectedRoute from "./components/ProtectedRoute";
 

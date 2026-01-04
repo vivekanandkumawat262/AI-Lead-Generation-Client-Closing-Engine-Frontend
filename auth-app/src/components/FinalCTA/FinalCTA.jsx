@@ -74,6 +74,7 @@ const FinalCTA = () => {
               </button>
 
               <button
+                onClick={() => navigate("/contact-us")}
                 className="w-full text-sm font-medium text-slate-500 hover:text-slate-700 transition"
               >
                 Book a Live Demo →

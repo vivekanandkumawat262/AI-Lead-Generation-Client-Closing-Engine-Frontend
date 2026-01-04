@@ -1,9 +1,11 @@
 import React from 'react'
 import { Link, NavLink} from 'react-router-dom'
 import logo from '../../assets/logo1.png';
-
+// import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    // const navigate = useNavigate();
+    const token = localStorage.getItem("token");
   return ( 
         <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
             <nav className="max-w-7xl mx-auto px-6">
@@ -45,18 +47,48 @@ const Header = () => {
 
                 {/* Auth Buttons */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Link
+                    {!token ? (
+  <>
+    <Link to="/login" >Log in</Link>
+    <Link to="/signup" className='inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 transition'>Get Started</Link>
+  </>
+) : (
+//   <Link
+//     to={localStorage.getItem("role") === "ADMIN"
+//       ? "/admin/dashboard"
+//       : "/agent/dashboard"}
+//   >
+//     Dashboard
+//   </Link>
+  
+          <NavLink
+                to={localStorage.getItem("role") === "ADMIN"
+      ? "/admin/dashboard"
+      : "/agent/dashboard"}
+                            className={({ isActive }) =>
+                            `transition ${
+                                isActive
+                                ? "inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                                : "inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                            }`
+                            }
+                        >
+                            Dashboard
+                        </NavLink>
+)}
+
+                   {/* <Link
                     to="/login"
                     className="text-sm font-medium text-slate-700 hover:text-slate-900 transition"
                     >
-                    Log in
+                    Log In
                     </Link>
                     <Link
                     to="/signup"
                     className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition shadow-sm"
                     >
                     Get Started
-                    </Link>
+                    </Link> */}
                 </div>
 
                 {/* Mobile Menu Button */}

@@ -2,6 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
+import AgentDashboard from "./pages/agent/pages/AgentDashboard";
+import LeadDetails from "./pages/agent/pages/LeadDetail";
+import EmailComposer from "./pages/agent/pages/EmailComposer";
+import Activity from "./pages/agent/pages/Activity";
+import Settings from "./pages/agent/pages/Settings";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -17,18 +23,20 @@ import ContactUs from "./components/ContactUs/ContactUs";
 
 /* Auth Pages */
 import Login from "./auth/Login";
-import Signup from "./pages/Signup";
+import Signup from "./auth/Signup";
 import LogoutButton from "./auth/Logout";
 
 /* Dashboards */
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AgentDashboard from "./pages/agent/AgentDashboard";
-import Leads from "./pages/Leads";
+  
+import Leads from "./pages/agent/pages/Leads";
 
 /* Route Guards */
 import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateRoute from "./auth/PrivateRoute";
 import Pricing from "./components/Pricing/Pricing";
+import AuthLayout from "./auth/AuthLayout";
+import AgentLayout from "./pages/agent/Layout/AgentLayout";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +50,16 @@ const router = createBrowserRouter([
       { path: "/pricing", element: <Pricing /> },
       { path: "/technology", element: <Technology /> },
       { path: "/contact-us", element: <ContactUs /> },
+      
+       // AUTH PAGES (NO HEADER/FOOTER)
+      {
+        path: "/",
+        element: <AuthLayout />,
+        children: [
+          { path: "/login", element: <Login /> },
+          { path: "/signup", element: <Signup /> },
+        ],
+      },
 
       /* ---------- AUTH ROUTES ---------- */
       { path: "/login", element: <Login /> },
@@ -49,14 +67,7 @@ const router = createBrowserRouter([
       { path: "/logout", element: <LogoutButton /> },
 
       /* ---------- PRIVATE ROUTES ---------- */
-      {
-        path: "/leads",
-        element: (
-          <PrivateRoute>
-            <Leads />
-          </PrivateRoute>
-        ),
-      },
+       
 
       /* ---------- ADMIN ROUTES ---------- */
       {
@@ -70,13 +81,21 @@ const router = createBrowserRouter([
 
       /* ---------- AGENT ROUTES ---------- */
       {
-        path: "/agent/dashboard",
+        path: "/agent",
         element: (
           <ProtectedRoute allowedRoles={["AGENT"]}>
-            <AgentDashboard />
+            <AgentLayout />
           </ProtectedRoute>
         ),
-      },
+        children: [
+          { path: "dashboard", element: <AgentDashboard /> },
+          { path: "leads", element: <Leads /> },
+          { path: "leads/:id", element: <LeadDetails /> },
+          { path: "email", element: <EmailComposer /> },
+          { path: "activity", element: <Activity /> },
+          { path: "settings", element: <Settings /> },
+        ],
+      }
     ],
   },
 ]);

@@ -33,3 +33,8 @@
 .perspective-1000 {
   perspective: 1000px;
 }
+
+.blur-bg {
+  filter: blur(6px);
+  pointer-events: none; /* 🔥 THIS FIXES IT */
+}

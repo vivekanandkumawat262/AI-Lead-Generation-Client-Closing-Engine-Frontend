@@ -1,38 +1,34 @@
-import { createContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect } from "react";
 
+const AuthContext = createContext();
 
-export const AuthContext = createContext();
- 
-export const AuthProvider =({children}) => {
-			
-			const [user, setUser] = useState(null);
-		 
-			useEffect(()=>{
-				const savedUser = localStorage.getItem("user")    
-				
-				if (savedUser) {
-					setUser(JSON.parse(savedUser));
-				}
-			}, []);
-			  
-			  
-			const login =(email) => {
-				const userData ={email};
-				setUser(userData);
-				localStorage.setItem("user", JSON.stringify(userData))
-			};			
-			
-			const logout =() => {
-				setUser(null);
-				localStorage.removeItem("user");
-			};
-			
-			
-			
-			return (
-			    <AuthContext.Provider value={{user, login, logout}}>
-					{children}
-				</AuthContext.Provider>
-			);
-			
-}
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+    setRole(localStorage.getItem("role"));
+  }, []);
+
+  const login = (token, role) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    setToken(token);
+    setRole(role);
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    setToken(null);
+    setRole(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
