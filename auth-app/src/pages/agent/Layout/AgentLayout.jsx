@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { NavLink, Outlet } from "react-router-dom";
+import Profile from "../components/Profile";
 
 const AgentLayout = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const AgentLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r p-4">
         <h2 className="font-bold text-lg mb-6">Agent Panel</h2>
-
+        <Profile />
         <nav className="space-y-2">
             
           <button  className="block">

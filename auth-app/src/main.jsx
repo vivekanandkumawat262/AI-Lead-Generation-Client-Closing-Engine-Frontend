@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import { Provider } from 'react-redux'
+import {store} from './app/store'
 
 import AgentDashboard from "./pages/agent/pages/AgentDashboard";
 import LeadDetails from "./pages/agent/pages/LeadDetail";
@@ -37,6 +39,7 @@ import PrivateRoute from "./auth/PrivateRoute";
 import Pricing from "./components/Pricing/Pricing";
 import AuthLayout from "./auth/AuthLayout";
 import AgentLayout from "./pages/agent/Layout/AgentLayout";
+import Github, { githubInfoLoader } from "./components/Github/Github";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +53,7 @@ const router = createBrowserRouter([
       { path: "/pricing", element: <Pricing /> },
       { path: "/technology", element: <Technology /> },
       { path: "/contact-us", element: <ContactUs /> },
+      { path: "/github", element: <Github />, loader: githubInfoLoader },
       
        // AUTH PAGES (NO HEADER/FOOTER)
       {
@@ -102,8 +106,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </Provider>
   </React.StrictMode>
 );

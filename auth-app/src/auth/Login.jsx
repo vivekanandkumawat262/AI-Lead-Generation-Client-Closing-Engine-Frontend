@@ -1,10 +1,15 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Modal from "./Model"; // same Modal component
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('')
+  const { setUser } = useAuth();
+  
+   
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +20,8 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
+     
+    setUser({username, password});  // Set the username in context
 
     try {
       const res = await axios.post(
@@ -27,6 +34,8 @@ const Login = () => {
       // Save auth data
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("username", username); // Save username to localStorage
+      localStorage.setItem("password", password); // Save password to localStorage
 
       // Redirect based on role
       if (data.role === "ADMIN") {
@@ -67,6 +76,15 @@ const Login = () => {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-xl border px-4 py-3"
+        />
+
+        <input
+          type="text"
+          placeholder="Username"
+          required
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full rounded-xl border px-4 py-3"
         />
 

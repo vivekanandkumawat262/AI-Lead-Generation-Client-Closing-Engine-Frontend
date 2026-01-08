@@ -3,7 +3,7 @@ import homeImage from "../../assets/homeimage.png";
 
 const Home = () => {
   return (
-    <section className="bg-gradient-to-b from-white to-slate-50">
+    <section className="bg-gradient-to-b from-white to-slate-50 ">
       <div className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
         {/* Left Content */}
