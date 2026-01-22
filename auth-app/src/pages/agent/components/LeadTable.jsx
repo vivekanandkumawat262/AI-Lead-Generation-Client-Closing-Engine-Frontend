@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import LeadStatusBadge from "./LeadStatusBadge";
 
 const LeadTable = ({ leads = [] }) => {
+  console.log(leads)
   return (
     <table className="w-full bg-white rounded-xl shadow overflow-hidden">
       <thead className="bg-slate-100">

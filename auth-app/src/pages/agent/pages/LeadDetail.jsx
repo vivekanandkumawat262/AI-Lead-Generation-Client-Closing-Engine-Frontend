@@ -8,6 +8,7 @@ import EmailOutreach from "../components/EmailOutreach";
 import StatusUpdate from "../components/StatusUpdate";
 import Leads from "../AddLeads";
 import ReplyIntentSimulator from "../components/leads/ReplyIntentSimulator";
+import GenerateProposal from "../components/GenerateProposal";
 
 function LeadDetails() {
   const { id } = useParams();
@@ -30,7 +31,9 @@ function LeadDetails() {
 
       <LeadInfoCard lead={lead} />
 
-      <EmailOutreach leadId={lead.id} onStatusChange={setLead} />
+       {lead.status === "NEW" && (
+        <EmailOutreach leadId={lead.id} onStatusChange={setLead} />
+       )}
 
       <StatusUpdate lead={lead} onUpdate={setLead} />
        
@@ -42,13 +45,45 @@ function LeadDetails() {
       <p className="text-sm mt-1">
         Status: <strong>{lead.status}</strong>
       </p>
+      {lead.status === "CONTACTED" && (
+  <ReplyIntentSimulator
+    leadId={lead.id}
+    onStatusUpdate={(newStatus) =>
+      setLead({ ...lead, status: newStatus })
+    }
+  />
+)}
         {/* 🔥 AI Reply Component */}
-      <ReplyIntentSimulator
-        leadId={lead.id}
-        onStatusUpdate={(newStatus) =>
-          setLead({ ...lead, status: newStatus })
-        }
-      />
+   {lead.status === "INTERESTED" && (
+  <div className="bg-slate-50 p-4 rounded">
+    <h3 className="font-semibold">Lead is Interested</h3>
+
+    <GenerateProposal
+      leadId={lead.id}
+      onSuccess={(updatedLead) => setLead(updatedLead)}
+    />
+  </div>
+)}
+
+ 
+{lead.status === "PROPOSAL_SENT" && (
+  <div className="bg-slate-50 p-4 rounded">
+    <h3 className="font-semibold">Proposal Sent</h3>
+    <p className="text-sm mt-2">{lead.proposal?.body}</p>
+    <p className="text-green-600 mt-2">Awaiting payment</p>
+  </div>
+)}
+
+      
+ 
+
+      
+  
+ 
+
+     
+
+
 
     </div>
   );

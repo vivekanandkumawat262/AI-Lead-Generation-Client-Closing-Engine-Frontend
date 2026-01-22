@@ -7,8 +7,10 @@ const api = axios.create({
   },
 });
 
-export const getLeads = () => api.get("/agent/leads");
-export const getLeadById = (id) => api.get(`/agent/leads/${id}`);
-export const sendEmail = (payload) => api.post("/agent/email", payload);
-export const getActivity = () => api.get("/agent/activity");
-export const updateSettings = (payload) => api.put("/agent/settings", payload);
+export const getLeads = () => api.get("/leads");
+export const getLeadById = (id) => api.get(`/leads/${id}`);
+export const sendEmail = (payload) => api.post("/email", payload);
+export const sendReply = (leadId, content) => api.post(`/replies/${leadId}`, { content });
+
+export const getActivity = () => api.get("/activity");
+export const updateSettings = (payload) => api.put("/settings", payload);

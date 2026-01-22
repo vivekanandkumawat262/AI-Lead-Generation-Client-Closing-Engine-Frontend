@@ -33,7 +33,7 @@ function Leads() {
         </ul>
       )} */}
 
-      <LeadTable leads={leads} />
+      {/* <LeadTable leads={leads} /> */}
       <AddLeads/>
     </div>
   );

@@ -1,27 +1,28 @@
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import logo from '../../assets/logo1.png'
-import { useAuth } from '../../context/AuthContext'
-import TodoItem from '../TodoItem'
+import React from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo1.png";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
- 
-
   const {
-    todos,
-    addTodo,
+    user,
+    token,
+    logout,
     themeMode,
     lightTheme,
     darkTheme
-  } = useAuth()
-
-  const token = localStorage.getItem("token")
-
+  } = useAuth();
+  const navigate = useNavigate();
+  const { logout: authLogout } = useAuth();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    authLogout();
+    navigate("/", { replace: true });
+  };
   const onChangeBtn = (e) => {
-    e.currentTarget.checked ? darkTheme() : lightTheme()
-  }
-
- 
+    e.currentTarget.checked ? darkTheme() : lightTheme();
+  };
 
   const NAV_ITEMS = [
     {
@@ -66,7 +67,10 @@ const Header = () => {
         { label: "Repositories", path: "/github#repos" }
       ]
     }
-  ]
+  ];
+
+  const dashboardPath =
+    user?.role === "ADMIN" ? "/admin/dashboard" : "/agent/dashboard";
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b">
@@ -79,98 +83,65 @@ const Header = () => {
           </Link>
 
           {/* Desktop Nav */}
-          {/* <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
-            {NAV_ITEMS.map(item => (
+          <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
+            {NAV_ITEMS.map((item) => (
               <li key={item.label} className="relative group">
+
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    isActive
-                      ? "text-orange-500"
-                      : "text-slate-700 dark:text-slate-200 hover:text-slate-900"
+                    `flex items-center gap-1 transition ${
+                      isActive
+                        ? "text-orange-500"
+                        : "text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+                    }`
                   }
                 >
                   {item.label}
+                  {item.dropdown && (
+                    <svg
+                      className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  )}
                 </NavLink>
 
                 {item.dropdown && (
-                  <ul className="absolute left-0 mt-2 w-44 bg-white dark:bg-slate-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                    {item.dropdown.map(sub => (
-                      <li key={sub.label}>
+                  <ul className="absolute left-0 mt-2 w-44 rounded-lg bg-white dark:bg-slate-800
+                                shadow-lg border border-slate-200 dark:border-slate-700
+                                opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                                transition-all duration-200 z-50">
+                    {item.dropdown.map((subItem) => (
+                      <li key={subItem.label}>
                         <NavLink
-                          to={sub.path}
-                          className="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          to={subItem.path}
+                          className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200
+                                    hover:bg-slate-100 dark:hover:bg-slate-700"
                         >
-                          {sub.label}
+                          {subItem.label}
                         </NavLink>
                       </li>
                     ))}
                   </ul>
                 )}
+
               </li>
             ))}
-          </ul> */}
-          <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
-                    {NAV_ITEMS.map((item) => (
-                        <li key={item.label} className="relative group">
-
-                        {/* Top-level link */}
-                        <NavLink
-                            to={item.path}
-                            className={({ isActive }) =>
-                            `flex items-center gap-1 transition ${
-                                isActive
-                                ? "text-orange-500"
-                                : "text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
-                            }`
-                            }
-                        >
-                            {item.label}
-
-                            {/* Dropdown arrow */}
-                            {item.dropdown && (
-                            <svg
-                                className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                            )}
-                        </NavLink>
-
-                        {/* Dropdown menu */}
-                        {item.dropdown && (
-                            <ul className="absolute left-0 mt-2 w-44 rounded-lg bg-white dark:bg-slate-800
-                                        shadow-lg border border-slate-200 dark:border-slate-700
-                                        opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                                        transition-all duration-200 z-50">
-                            {item.dropdown.map((subItem) => (
-                                <li key={subItem.label}>
-                                <NavLink
-                                    to={subItem.path}
-                                    className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200
-                                            hover:bg-slate-100 dark:hover:bg-slate-700"
-                                >
-                                    {subItem.label}
-                                </NavLink>
-                                </li>
-                            ))}
-                            </ul>
-                        )}
-
-                        </li>
-                    ))}
-                </ul>
+          </ul>
 
           {/* Right Section */}
           <div className="flex items-center gap-4">
 
             {!token ? (
               <>
-                <Link to="/login">Log in</Link>
+                <Link to="/login" className="text-sm font-medium">
+                  Log in
+                </Link>
                 <Link
                   to="/signup"
                   className="bg-orange-500 text-white px-4 py-2 rounded-lg"
@@ -179,14 +150,19 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              <NavLink
-                to={localStorage.getItem("role") === "ADMIN"
-                  ? "/admin/dashboard"
-                  : "/agent/dashboard"}
-                className="bg-orange-500 text-white px-4 py-2 rounded-lg"
-              >
-                Dashboard
-              </NavLink>
+              <>
+                <NavLink
+                  to={dashboardPath}
+                  className="bg-orange-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Dashboard
+                </NavLink>
+
+                 
+                <button onClick={handleLogout} className="text-red-500">
+                  Logout
+                </button>
+              </>
             )}
 
             {/* Theme Toggle */}
@@ -197,20 +173,233 @@ const Header = () => {
                 checked={themeMode === "dark"}
                 onChange={onChangeBtn}
               />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:after:translate-x-full after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all" />
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:after:translate-x-full
+                            after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all" />
             </label>
           </div>
+
         </div>
-
-        {/* TODO SECTION */}
-       
-
       </nav>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
+
+
+// import React, { useState } from 'react'
+// import { Link, NavLink } from 'react-router-dom'
+// import logo from '../../assets/logo1.png'
+// import { useAuth } from '../../context/AuthContext'
+// import TodoItem from '../TodoItem'
+
+// const Header = () => {
+ 
+
+//   const {
+//     todos,
+//     addTodo,
+//     themeMode,
+//     lightTheme,
+//     darkTheme
+//   } = useAuth()
+
+//   const token = localStorage.getItem("token")
+
+//   const onChangeBtn = (e) => {
+//     e.currentTarget.checked ? darkTheme() : lightTheme()
+//   }
+
+ 
+
+//   const NAV_ITEMS = [
+//     {
+//       label: "Home",
+//       path: "/",
+//       dropdown: [
+//         { label: "Overview", path: "/" },
+//         { label: "Updates", path: "/updates" }
+//       ]
+//     },
+//     {
+//       label: "Product",
+//       path: "/product",
+//       dropdown: [
+//         { label: "Features", path: "/product#features" },
+//         { label: "Integrations", path: "/product#integrations" },
+//         { label: "Roadmap", path: "/product#roadmap" }
+//       ]
+//     },
+//     { label: "Pricing", path: "/pricing", dropdown: null },
+//     {
+//       label: "Technology",
+//       path: "/technology",
+//       dropdown: [
+//         { label: "Architecture", path: "/technology#architecture" },
+//         { label: "Security", path: "/technology#security" }
+//       ]
+//     },
+//     {
+//       label: "Contact Us",
+//       path: "/contact-us",
+//       dropdown: [
+//         { label: "Support", path: "/contact-us#support" },
+//         { label: "Sales", path: "/contact-us#sales" }
+//       ]
+//     },
+//     {
+//       label: "Github",
+//       path: "/github",
+//       dropdown: [
+//         { label: "Profile", path: "/github" },
+//         { label: "Repositories", path: "/github#repos" }
+//       ]
+//     }
+//   ]
+
+//   return (
+//     <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b">
+//       <nav className="max-w-7xl mx-auto px-6">
+//         <div className="flex items-center justify-between h-16">
+
+//           {/* Logo */}
+//           <Link to="/" className="flex items-center gap-2">
+//             <img src={logo} alt="Logo" className="h-8" />
+//           </Link>
+
+//           {/* Desktop Nav */}
+//           {/* <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
+//             {NAV_ITEMS.map(item => (
+//               <li key={item.label} className="relative group">
+//                 <NavLink
+//                   to={item.path}
+//                   className={({ isActive }) =>
+//                     isActive
+//                       ? "text-orange-500"
+//                       : "text-slate-700 dark:text-slate-200 hover:text-slate-900"
+//                   }
+//                 >
+//                   {item.label}
+//                 </NavLink>
+
+//                 {item.dropdown && (
+//                   <ul className="absolute left-0 mt-2 w-44 bg-white dark:bg-slate-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+//                     {item.dropdown.map(sub => (
+//                       <li key={sub.label}>
+//                         <NavLink
+//                           to={sub.path}
+//                           className="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700"
+//                         >
+//                           {sub.label}
+//                         </NavLink>
+//                       </li>
+//                     ))}
+//                   </ul>
+//                 )}
+//               </li>
+//             ))}
+//           </ul> */}
+//           <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
+//                     {NAV_ITEMS.map((item) => (
+//                         <li key={item.label} className="relative group">
+
+//                         {/* Top-level link */}
+//                         <NavLink
+//                             to={item.path}
+//                             className={({ isActive }) =>
+//                             `flex items-center gap-1 transition ${
+//                                 isActive
+//                                 ? "text-orange-500"
+//                                 : "text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+//                             }`
+//                             }
+//                         >
+//                             {item.label}
+
+//                             {/* Dropdown arrow */}
+//                             {item.dropdown && (
+//                             <svg
+//                                 className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
+//                                 fill="none"
+//                                 stroke="currentColor"
+//                                 strokeWidth="2"
+//                                 viewBox="0 0 24 24"
+//                             >
+//                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+//                             </svg>
+//                             )}
+//                         </NavLink>
+
+//                         {/* Dropdown menu */}
+//                         {item.dropdown && (
+//                             <ul className="absolute left-0 mt-2 w-44 rounded-lg bg-white dark:bg-slate-800
+//                                         shadow-lg border border-slate-200 dark:border-slate-700
+//                                         opacity-0 invisible group-hover:opacity-100 group-hover:visible
+//                                         transition-all duration-200 z-50">
+//                             {item.dropdown.map((subItem) => (
+//                                 <li key={subItem.label}>
+//                                 <NavLink
+//                                     to={subItem.path}
+//                                     className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200
+//                                             hover:bg-slate-100 dark:hover:bg-slate-700"
+//                                 >
+//                                     {subItem.label}
+//                                 </NavLink>
+//                                 </li>
+//                             ))}
+//                             </ul>
+//                         )}
+
+//                         </li>
+//                     ))}
+//                 </ul>
+
+//           {/* Right Section */}
+//           <div className="flex items-center gap-4">
+
+//             {!token ? (
+//               <>
+//                 <Link to="/login">Log in</Link>
+//                 <Link
+//                   to="/signup"
+//                   className="bg-orange-500 text-white px-4 py-2 rounded-lg"
+//                 >
+//                   Get Started
+//                 </Link>
+//               </>
+//             ) : (
+//               <NavLink
+//                 to={localStorage.getItem("role") === "ADMIN"
+//                   ? "/admin/dashboard"
+//                   : "/agent/dashboard"}
+//                 className="bg-orange-500 text-white px-4 py-2 rounded-lg"
+//               >
+//                 Dashboard
+//               </NavLink>
+//             )}
+
+//             {/* Theme Toggle */}
+//             <label className="relative inline-flex cursor-pointer">
+//               <input
+//                 type="checkbox"
+//                 className="sr-only peer"
+//                 checked={themeMode === "dark"}
+//                 onChange={onChangeBtn}
+//               />
+//               <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:after:translate-x-full after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all" />
+//             </label>
+//           </div>
+//         </div>
+
+//         {/* TODO SECTION */}
+       
+
+//       </nav>
+//     </header>
+//   )
+// }
+
+// export default Header
 
 
 

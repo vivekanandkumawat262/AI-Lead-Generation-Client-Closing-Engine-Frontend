@@ -1,6 +1,6 @@
 import { apiFetch } from "../../../api/api";
 
-const statuses = ["NEW", "CONTACTED", "INTERESTED", "CLOSED"];
+const statuses = ["NEW", "CONTACTED", "INTERESTED","NOT_INTERESTED",  "PROPOSAL_SENT","PAID","CLOSED" ];
 
 const StatusUpdate = ({ lead, onUpdate }) => {
   async function updateStatus(status) {
